@@ -22,4 +22,36 @@ def exists_word(word, instance):
 
 
 def search_by_word(word, instance):
-    """Aqui irá sua implementação"""
+    found_words = exists_word(word, instance)
+    search_results = []
+
+    for word_occurrence in found_words:
+        search_results.append(
+            format_occurrence(word, word_occurrence, instance)
+        )
+
+    return search_results
+
+
+def format_occurrence(word, occurrence, instance):
+    detailed_occurrence = []
+    file_data = get_file_data(occurrence["arquivo"], instance)
+
+    for occ in occurrence["ocorrencias"]:
+        line_content = file_data["linhas_do_arquivo"][occ["linha"] - 1].strip()
+        detailed_occurrence.append(
+            {"linha": occ["linha"], "conteudo": line_content}
+        )
+
+    return {
+        "palavra": word,
+        "arquivo": occurrence["arquivo"],
+        "ocorrencias": detailed_occurrence,
+    }
+
+
+def get_file_data(filename, instance):
+    for index in range(len(instance)):
+        file_data = instance.search(index)
+        if file_data["nome_do_arquivo"] == filename:
+            return file_data
